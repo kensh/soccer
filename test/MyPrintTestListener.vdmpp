@@ -45,5 +45,10 @@ operations
     println(b) == IO`print(b);
     
     
+    public print : Match ==> ()
+    print(b) == IO`print(b);
+    
+    public println : Match ==> ()
+    println(b) == IO`print(b);
 
 end MyPrintTestListener

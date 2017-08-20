@@ -3,7 +3,7 @@ class MatchManagerT01 is subclass of TestCase, CommonType, MyPrintTestListener
 instance variables
 
 man : MatchManager := new MatchManager();
-matchIDs : set of MatchID := {};
+
 
 
 
@@ -17,13 +17,25 @@ MatchManagerT01(str) == TestCase(str);
 
 public setUp : () ==> ()
 setUp() == (
-		println("------------------SEND-----------------");
+		println("\n------------------Group-----------------");
+		man.initGroup(4);
+		man.calc();
+		man.printAll();
 );
 
 public runTest : () ==> ()
 runTest() == 
   (
-		println("------------------SEND-----------------");
+  
+		dcl matchmakes : map Match to MatchMake := man.getAllMatchMakes();
+		dcl matchmake : MatchMake := matchmakes(mk_(2,1));
+		println("------------------START-----------------");
+--		for all matchmake in set rng man.getAllMatchMakes() do (
+--			matchmake.setScore()
+--		);
+		matchmake.setScore(3,2);
+		man.calc();
+		man.printAll();
 	);
 
 public tearDown : () ==> ()

@@ -1,16 +1,16 @@
--- Class of Match manager
+-- Class of Match manager reference:http://www.jfa.or.jp/jfa/terminology/
 class MatchManager is subclass of Environment, MyPrintTestListener
 
 
 instance variables
 
 -- matchmakes
-matchmakes : map MatchID to MatchMake := {|->};
+matchmakes : map Match to MatchMake := {|->};
 inv 
-  (forall id in set dom matchmakes & id = matchmakes(id).getID())
+  (forall match in set dom matchmakes & match = matchmakes(match).getMatch())
     and
-  (forall m in set rng matchmakes & valid(m))
-    and
+--  (forall m in set rng matchmakes & valid(m))
+--    and
   (forall mm1, mm2 in set rng matchmakes & 
     mm1 <> mm2 => consistent(mm1, mm2));
 
@@ -30,7 +30,8 @@ functions
 -- dupulication check
 public consistent : MatchMake * MatchMake -> bool
 consistent(mm1, mm2) ==
-   mm1.getID() <> mm2.getID() or equals(mm1.getMatch(), mm2.getMatch());
+--   mm1.getID() <> mm2.getID() or 
+   not equals(mm1.getMatch(), mm2.getMatch());
 
 -- dupulication check
 public consistentTeam : Team * Team -> bool
@@ -41,10 +42,10 @@ consistentTeam(t1, t2) ==
 operations
 
 -- validation check
-public pure valid : MatchMake ==> bool
-valid(mm) ==
-  return
-    mm.getID() in set getAllMatchIDs();
+--public pure valid : MatchMake ==> bool
+--valid(mm) ==
+--  return
+--    mm.getID() in set getAllMatchIDs();
 
 -- validation check
 public pure validTeam : Team ==> bool
@@ -56,13 +57,13 @@ validTeam(t) ==
 public addMatchMake : MatchMake ==> ()
 addMatchMake(matchmake) ==
   atomic(
-    matchmakes := matchmakes munion {matchmake.getID() |-> matchmake};
+    matchmakes := matchmakes munion {matchmake.getMatch() |-> matchmake};
   )
 pre 
-  matchmake.getID() not in set dom matchmakes
-    and
-  valid(matchmake)
-    and
+--  matchmake.getID() not in set dom matchmakes
+--    and
+--  valid(matchmake)
+--    and
   forall n in set rng matchmakes & consistent(matchmake, n)
 post matchmake in set rng matchmakes;
 
@@ -81,16 +82,79 @@ pre
   forall n in set rng teams & consistentTeam(team, n)
 post team in set rng teams;
 
--- get MatchMake from specific ID
-public pure getMatchMake : MatchID ==> MatchMake
-getMatchMake(matchID) ==
-  return matchmakes(matchID)
-pre matchID in set dom matchmakes;
+-- get MatchMake from specific Match
+public pure getMatchMake : Match ==> MatchMake
+getMatchMake(match) ==
+  return matchmakes(match)
+pre match in set dom matchmakes;
+
+-- get All MatchMakes 
+public pure getAllMatchMakes : () ==> map Match to MatchMake
+getAllMatchMakes() ==
+  return matchmakes;
 
 -- get Team from specific ID
 public pure getTeam : TeamID ==> Team
 getTeam(teamID) ==
   return teams(teamID)
 pre teamID in set dom teams;
+
+-- calculate group scores
+public calc : () ==> ()
+calc() == (
+	for all matchmake in set rng matchmakes do (
+		if matchmake.isDone() then (
+			dcl match : Match := matchmake.getMatch();
+			dcl team1 : Team := getTeam(match.#1);
+			dcl team2 : Team := getTeam(match.#2);
+			
+			team1.setPoint(matchmake.getPoint(team1.getID()));
+			team1.setGoalFor(matchmake.getScore(team1.getID()));
+			team1.setAgainst(matchmake.getScore(team2.getID()));
+			
+			team2.setPoint(matchmake.getPoint(team2.getID()));
+			team2.setGoalFor(matchmake.getScore(team2.getID()));
+			team2.setAgainst(matchmake.getScore(team1.getID()));
+		);
+	);
+);
+
+
+-- initialize group
+public initGroup : int ==> ()
+initGroup(num) == (
+	-- dcl count : int := MATH`fac(num) / (2 * MATH`fac(num-2)); -- the number of matches within the group
+
+	for all i in set {1,...,num} do (
+		addTeamID(i);
+		addTeam(new Team(i));
+	);
+	
+	for all match in set getAllMatches() do (
+		addMatchMake(new MatchMake(match));
+	);
+)
+pre num >= 3;
+
+public printAll : () ==> ()
+printAll() == (
+  for all team in set rng teams do (
+		print(team.getID());
+		print(", ");
+	);
+	println("");
+	
+	for all matchmake in set rng matchmakes do (
+		print(matchmake.getMatch());
+		print(", ");
+	);
+	println("");
+	
+	for all team in set rng teams do (
+		print(team.getPoint());
+		print(", ");
+	);
+	println("");
+);
 
 end MatchManager

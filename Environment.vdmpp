@@ -9,9 +9,10 @@ teamIDs : set of TeamID := {};
 
 
 -- set of identifiers of match
-matchIDs : set of MatchID := {};
+--matchIDs : set of MatchID := {};
+
 -- Match Makes
-matches : set of (TeamID * TeamID) := {};
+matches : set of Match := {};
 
 
 operations
@@ -20,44 +21,62 @@ operations
 public addTeamID : TeamID ==> ()
 addTeamID(teamID) ==
 atomic(
- 	matches := matches union {mk_(teamID , t) | t in set teamIDs}
-  teamIDs := teamIDs union {teamID}
+ 	matches := matches union {mk_(teamID , t) | t in set teamIDs};
+  teamIDs := teamIDs union {teamID};
 )
 pre teamID not in set teamIDs
 		and not exists match in set matches & match.#1 = teamID or match.#2 = teamID
 post teamID in set teamIDs;
 
+
+
+-- add new MatchID
+--public addMatchID : MatchID ==> ()
+--addMatchID(matchID) ==
+--atomic(
+-- 	matches := matches union {mk_(teamID , t) | t in set teamIDs}
+--  teamIDs := teamIDs union {teamID}
+--)
+--pre teamID not in set teamIDs
+--		and not exists match in set matches & match.#1 = teamID or match.#2 = teamID
+--post teamID in set teamIDs;
+
+-- get all matches
+public pure getAllMatches : () ==> set of Match
+getAllMatches() ==
+  return matches;
+  
 -- get all TeamIDs
 public pure getAllTeamIDs : () ==> set of TeamID
 getAllTeamIDs() ==
   return teamIDs;
 
 -- get all MatchIDs
-public pure getAllMatchIDs : () ==> set of MatchID
-getAllMatchIDs() ==
-  return matchIDs;
+--public pure getAllMatchIDs : () ==> set of MatchID
+--getAllMatchIDs() ==
+--  return matchIDs;
 
 -- Check if the two match is identical 
-public static pure equals : (TeamID * TeamID) * (TeamID * TeamID) ==> bool
+public static pure equals : Match * Match ==> bool
 equals(match1, match2) == (
   return match1 = match2 or match1 = swap(match2);
 );
 	
 
 -- swapping tuple
-public static pure swap : (TeamID * TeamID) ==> (TeamID * TeamID) 
+public static pure swap : Match ==> Match 
 swap(match) == (
 	return mk_(match.#2, match.#1);
 );
 
 -- if the teamID belongs in the match
-public pure inn : TeamID * (TeamID * TeamID) ==> bool 
+public pure inn : TeamID * Match ==> bool 
 inn(teamID, match) == (
 	return match.#1 = teamID or match.#2 = teamID;
 );
 
 -- get all matches related with the own TeamID
-public pure getOwnMatches : TeamID ==> set of (TeamID * TeamID)
+public pure getOwnMatches : TeamID ==> set of Match
 getOwnMatches(teamID) == (
   return {match | match in set matches &  inn(teamID, match)};
 )

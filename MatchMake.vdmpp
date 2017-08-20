@@ -5,40 +5,39 @@ values
 
 instance variables
 
-id : MatchID; -- Identifier of a Match
+--id : MatchID; -- Identifier of a Match
 matchdone : bool := false;
 score : map TeamID to int;
 state : map TeamID to State;
 point : map TeamID to int;
-match : TeamID * TeamID;
+match : Match;
 
 operations
 
 -- constructor
-public MatchMake : MatchID ==> MatchMake
-MatchMake(mid) ==
+public MatchMake : Match ==> MatchMake
+MatchMake(m) ==
   atomic(
-    id := mid;
 		matchdone := false;
 		score := {|->};
 		state := {|->};
 		point := {|->};
-		match := mk_(mk_token(""), mk_token(""));
+		match := m;
   );
 
-public pure getID : () ==> MatchID
-getID() ==
-  return id;
+--public pure getID : () ==> MatchID
+--getID() ==
+--  return id;
 
 public pure isDone : () ==> bool
 isDone() == return matchdone;
 
-public done : () ==> ()
+done : () ==> ()
 done() == (
 	matchdone := true;
 );
 
-public pure getMatch : () ==> TeamID * TeamID
+public pure getMatch : () ==> Match
 getMatch() == return match;
 
 public setMatch : TeamID * TeamID ==> ()
@@ -48,11 +47,12 @@ setMatch(teamID1, teamID2) == (
 pre teamID1 in set getAllTeamIDs()
 	and teamID2 in set getAllTeamIDs();
 
-public pure getScore : () ==> map TeamID to int
-getScore() == return score;
 
-public setScore : TeamID * int * TeamID * int ==> ()
-setScore(teamID1, goal1, teamID2, goal2) ==  (
+public setScore : int * int ==> ()
+setScore(goal1, goal2) ==  (
+	dcl teamID1 : TeamID := match.#1;
+	dcl teamID2 : TeamID := match.#2;
+	
 	dcl state1 : State := <DRAW>,
 			state2 : State := <DRAW>;
 	dcl point1 : int := 1,
@@ -73,13 +73,16 @@ setScore(teamID1, goal1, teamID2, goal2) ==  (
 	score := score munion {teamID1 |-> goal1} munion {teamID2 |-> goal2};
 	state := state munion {teamID1 |-> state1} munion {teamID2 |-> state2};
 	point := point munion {teamID1 |-> point1} munion {teamID2 |-> point2};
+	
+	done();
 )
-pre teamID1 in set getAllTeamIDs()
-	and teamID2 in set getAllTeamIDs()
-	and goal1 >= 0 and goal2 >= 0
+pre goal1 >= 0 and goal2 >= 0
 	and card dom score = 0
 post card dom score = 2;
 
+
+public pure getScore : TeamID ==>  int
+getScore(teamID) == return score(teamID);
 
 public pure  getState: TeamID ==> State
 getState(teamID) == (
