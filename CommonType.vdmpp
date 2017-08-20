@@ -1,0 +1,13 @@
+-- Common types
+class CommonType
+
+
+types
+
+public MatchID = nat; -- Match identifier
+
+public TeamID = token; -- Team identifier
+
+public State = <WIN> | <LOSE> | <DRAW> ;
+
+end CommonType

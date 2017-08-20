@@ -1,0 +1,58 @@
+-- Class of Match manager
+class MatchManager is subclass of Environment, MyPrintTestListener
+
+
+instance variables
+
+-- matchmakes
+matchemakes : map MatchID to MatchMake := {|->};
+inv 
+  (forall id in set dom matchemakes & id = matchemakes(id).getID())
+    and
+  (forall m in set rng matchemakes & valid(m))
+    and
+  (forall mm1, mm2 in set rng matchemakes & 
+    mm1 <> mm2 => consistent(mm1, mm2));
+
+
+
+functions
+
+-- dupulication check
+public consistent : MatchMake * MatchMake -> bool
+consistent(mm1, mm2) ==
+   mm1.getID() <> mm2.getID() or equals(mm1.getMatch(), mm2.getMatch());
+
+
+operations
+
+-- validation check
+public pure valid : MatchMake ==> bool
+valid(mm) ==
+  return
+    mm.getID() in set getAllMatchIDs();
+
+-- Node情報を追加する
+public addNode : Node ==> ()
+addNode(node) ==
+  atomic(
+    nodes := nodes munion {node.getID() |-> node};
+  )
+pre 
+  node.getID() not in set dom nodes
+    and
+  validNode(node)
+    and
+  forall n in set rng nodes & consistentNodes(node, n)
+post node in set rng nodes;
+
+
+-- Nodeの識別子からNode情報を取得する
+--public pure getNode : NodeID ==> Node
+--getNode(nodeID) ==
+--  return nodes(nodeID)
+--pre nodeID in set dom nodes;
+
+
+
+end MatchManager
