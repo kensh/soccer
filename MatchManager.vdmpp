@@ -14,6 +14,15 @@ inv
   (forall mm1, mm2 in set rng matchmakes & 
     mm1 <> mm2 => consistent(mm1, mm2));
 
+-- teams
+teams : map TeamID to Team := {|->};
+inv 
+  (forall id in set dom teams & id = teams(id).getID())
+    and
+  (forall t in set rng teams & validTeam(t))
+    and
+  (forall t1, t2 in set rng teams & 
+    t1 <> t2 => consistentTeam(t1, t2));
 
 
 functions
@@ -22,6 +31,11 @@ functions
 public consistent : MatchMake * MatchMake -> bool
 consistent(mm1, mm2) ==
    mm1.getID() <> mm2.getID() or equals(mm1.getMatch(), mm2.getMatch());
+
+-- dupulication check
+public consistentTeam : Team * Team -> bool
+consistentTeam(t1, t2) ==
+   t1.getID() <> t2.getID();
 
 
 operations
@@ -32,6 +46,12 @@ valid(mm) ==
   return
     mm.getID() in set getAllMatchIDs();
 
+-- validation check
+public pure validTeam : Team ==> bool
+validTeam(t) ==
+  return
+    t.getID() in set getAllTeamIDs();
+    
 -- add MatchMake
 public addMatchMake : MatchMake ==> ()
 addMatchMake(matchmake) ==
@@ -47,12 +67,30 @@ pre
 post matchmake in set rng matchmakes;
 
 
+-- add Team
+public addTeam : Team ==> ()
+addTeam(team) ==
+  atomic(
+    teams := teams munion {team.getID() |-> team};
+  )
+pre 
+  team.getID() not in set dom teams
+    and
+  validTeam(team)
+    and
+  forall n in set rng teams & consistentTeam(team, n)
+post team in set rng teams;
+
 -- get MatchMake from specific ID
 public pure getMatchMake : MatchID ==> MatchMake
 getMatchMake(matchID) ==
   return matchmakes(matchID)
 pre matchID in set dom matchmakes;
 
-
+-- get Team from specific ID
+public pure getTeam : TeamID ==> Team
+getTeam(teamID) ==
+  return teams(teamID)
+pre teamID in set dom teams;
 
 end MatchManager

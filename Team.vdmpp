@@ -1,0 +1,53 @@
+-- Class of Team
+class Team is subclass of Environment
+
+values
+
+instance variables
+
+id : TeamID; -- Identifier of a Team
+point : int;
+goalfor : int;
+against : int;
+
+operations
+
+-- constructor
+public Team : TeamID ==> Team
+Team(tid) ==
+  atomic(
+    id := tid;
+		point := 0;
+		goalfor := 0;
+		against := 0;
+  );
+
+public pure getID : () ==> TeamID
+getID() ==
+  return id;
+
+public pure getPoint : () ==> int
+getPoint() == return point;
+
+public setPoint : int ==> ()
+setPoint(p) == (
+	point := p;
+);
+
+public pure getGoalFor : () ==> int
+getGoalFor() == return goalfor;
+
+public setGoalFor : int ==> ()
+setGoalFor(p) == (
+	goalfor := p;
+);
+
+public pure getAgainst : () ==> int
+getAgainst() == return against;
+
+public setAgainst : int ==> ()
+setAgainst(p) == (
+	against := p;
+);
+
+end Team
