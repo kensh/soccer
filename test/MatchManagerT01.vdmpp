@@ -1,0 +1,34 @@
+class MatchManagerT01 is subclass of TestCase, CommonType, MyPrintTestListener
+
+instance variables
+
+man : MatchManager := new MatchManager();
+matchIDs : set of MatchID := {};
+
+
+
+operations 
+
+public MatchManagerT01 : () ==> MatchManagerT01
+MatchManagerT01() == TestCase("T01");
+
+public MatchManagerT01 : seq of char ==> MatchManagerT01
+MatchManagerT01(str) == TestCase(str);
+
+public setUp : () ==> ()
+setUp() == (
+		println("------------------SEND-----------------");
+);
+
+public runTest : () ==> ()
+runTest() == 
+  (
+		println("------------------SEND-----------------");
+	);
+
+public tearDown : () ==> ()
+tearDown() == 
+  skip;
+
+
+end MatchManagerT01

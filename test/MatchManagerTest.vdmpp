@@ -1,0 +1,22 @@
+-- MatchManagerTest
+class MatchManagerTest
+
+
+operations
+
+public static execute : () ==> ()
+execute() == (
+    dcl suite : TestSuite := new TestSuite("Match Manager Test"),
+        result : TestResult := new TestResult();
+    
+    result.addListener(new MyPrintTestListener());
+
+    
+    
+    suite.addTest(new MatchManagerT01("case01 - randomly creates nodes"));
+
+    suite.run(result);
+);
+
+
+end MatchManagerTest

@@ -5,13 +5,13 @@ class MatchManager is subclass of Environment, MyPrintTestListener
 instance variables
 
 -- matchmakes
-matchemakes : map MatchID to MatchMake := {|->};
+matchmakes : map MatchID to MatchMake := {|->};
 inv 
-  (forall id in set dom matchemakes & id = matchemakes(id).getID())
+  (forall id in set dom matchmakes & id = matchmakes(id).getID())
     and
-  (forall m in set rng matchemakes & valid(m))
+  (forall m in set rng matchmakes & valid(m))
     and
-  (forall mm1, mm2 in set rng matchemakes & 
+  (forall mm1, mm2 in set rng matchmakes & 
     mm1 <> mm2 => consistent(mm1, mm2));
 
 
@@ -32,26 +32,26 @@ valid(mm) ==
   return
     mm.getID() in set getAllMatchIDs();
 
--- Node情報を追加する
-public addNode : Node ==> ()
-addNode(node) ==
+-- add MatchMake
+public addMatchMake : MatchMake ==> ()
+addMatchMake(matchmake) ==
   atomic(
-    nodes := nodes munion {node.getID() |-> node};
+    matchmakes := matchmakes munion {matchmake.getID() |-> matchmake};
   )
 pre 
-  node.getID() not in set dom nodes
+  matchmake.getID() not in set dom matchmakes
     and
-  validNode(node)
+  valid(matchmake)
     and
-  forall n in set rng nodes & consistentNodes(node, n)
-post node in set rng nodes;
+  forall n in set rng matchmakes & consistent(matchmake, n)
+post matchmake in set rng matchmakes;
 
 
--- Nodeの識別子からNode情報を取得する
---public pure getNode : NodeID ==> Node
---getNode(nodeID) ==
---  return nodes(nodeID)
---pre nodeID in set dom nodes;
+-- get MatchMake from specific ID
+public pure getMatchMake : MatchID ==> MatchMake
+getMatchMake(matchID) ==
+  return matchmakes(matchID)
+pre matchID in set dom matchmakes;
 
 
 
