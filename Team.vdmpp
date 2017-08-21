@@ -10,7 +10,6 @@ point : int;
 goalfor : int;
 against : int;
 rank : int;
-c : int; -- for calculating purpose only
 
 operations
 
@@ -23,7 +22,6 @@ Team(tid) ==
 		goalfor := 0;
 		against := 0;
 		rank := 1;
-		c := 0;
   );
 
 public pure getID : () ==> TeamID
@@ -54,6 +52,15 @@ setAgainst(p) == (
 	against := p;
 );
 
+public pure getRank : () ==> int
+getRank() == return rank;
+
+public setRank : int ==> ()
+setRank(p) == (
+	rank := p;
+);
+
+-- for calculating purpose only
 public pure getC : () ==> int
 getC() == return 1000 * point + (100 + goalfor - against);
 

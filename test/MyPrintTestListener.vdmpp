@@ -51,5 +51,10 @@ operations
     public println : Match ==> ()
     println(b) == IO`print(b);
     
+    public print : Team ==> ()
+    print(b) == IO`print(b);
+    
+    public println : Team ==> ()
+    println(b) == IO`print(b);
 
 end MyPrintTestListener

@@ -24,6 +24,7 @@ inv
   (forall t1, t2 in set rng teams & 
     t1 <> t2 => consistentTeam(t1, t2));
 
+sortedteams : seq of Team := [];
 
 functions
 
@@ -102,6 +103,8 @@ pre teamID in set dom teams;
 -- calculate group scores
 public calc : () ==> ()
 calc() == (
+	dcl ss : seq of Team;
+	
 	for all matchmake in set rng matchmakes do (
 		if matchmake.isDone() then (
 			dcl match : Match := matchmake.getMatch();
@@ -117,6 +120,38 @@ calc() == (
 			team2.setAgainst(team2.getAgainst() + matchmake.getScore(team1.getID()));
 		);
 	);
+	
+	sortedteams := sort(rng teams, []);
+	
+	
+);
+
+public highest : set of Team ==> Team
+highest(subteams) == (
+	dcl max : int := -1;
+	dcl h : Team;
+	for all team in set subteams do (
+		if team.getC() > max then (
+			max := team.getC();
+			h := team;
+		);
+	);
+	return h;
+);
+
+public sort : set of Team * seq of Team==> seq of Team
+sort(subteams, ss) == (
+	dcl h : Team ;
+	
+	if card subteams = 0 then return ss;
+	
+	h := highest(subteams);
+	
+	if len ss = 0 then h.setRank(1)
+	else if ss(len ss).getC() = h.getC() then h.setRank(ss(len ss).getRank())
+	else h.setRank(len ss + 1);
+	
+	return sort(subteams\{h}, ss ^ [h]);
 );
 
 
@@ -166,6 +201,12 @@ printAll() == (
 		print(", ");
 	);
 	println("");
+	
+	-- 順位表を取得する
+	for all i in set {1, ..., card rng teams} do (
+		print(sortedteams(i));
+		println("");
+	);
 );
 
 end MatchManager
