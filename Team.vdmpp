@@ -9,6 +9,8 @@ id : TeamID; -- Identifier of a Team
 point : int;
 goalfor : int;
 against : int;
+rank : int;
+c : int; -- for calculating purpose only
 
 operations
 
@@ -20,6 +22,8 @@ Team(tid) ==
 		point := 0;
 		goalfor := 0;
 		against := 0;
+		rank := 1;
+		c := 0;
   );
 
 public pure getID : () ==> TeamID
@@ -49,5 +53,10 @@ public setAgainst : int ==> ()
 setAgainst(p) == (
 	against := p;
 );
+
+public pure getC : () ==> int
+getC() == return 1000 * point + (100 + goalfor - against);
+
+
 
 end Team

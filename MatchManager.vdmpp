@@ -108,13 +108,13 @@ calc() == (
 			dcl team1 : Team := getTeam(match.#1);
 			dcl team2 : Team := getTeam(match.#2);
 			
-			team1.setPoint(matchmake.getPoint(team1.getID()));
-			team1.setGoalFor(matchmake.getScore(team1.getID()));
-			team1.setAgainst(matchmake.getScore(team2.getID()));
+			team1.setPoint(team1.getPoint() + matchmake.getPoint(team1.getID()));
+			team1.setGoalFor(team1.getGoalFor() + matchmake.getScore(team1.getID()));
+			team1.setAgainst(team1.getAgainst() + matchmake.getScore(team2.getID()));
 			
-			team2.setPoint(matchmake.getPoint(team2.getID()));
-			team2.setGoalFor(matchmake.getScore(team2.getID()));
-			team2.setAgainst(matchmake.getScore(team1.getID()));
+			team2.setPoint(team2.getPoint() + matchmake.getPoint(team2.getID()));
+			team2.setGoalFor(team2.getGoalFor() + matchmake.getScore(team2.getID()));
+			team2.setAgainst(team2.getAgainst() + matchmake.getScore(team1.getID()));
 		);
 	);
 );
@@ -150,6 +150,17 @@ printAll() == (
 	);
 	println("");
 	
+	for all matchmake in set rng matchmakes do (
+		print(" <");
+		print(matchmake.getScore(matchmake.getMatch().#1));
+		print(" - ");
+		print(matchmake.getScore(matchmake.getMatch().#2));
+		print("> ");
+		print(", ");
+	);
+	println("");
+	
+	-- あるチームの成績情報を取得する
 	for all team in set rng teams do (
 		print(team.getPoint());
 		print(", ");

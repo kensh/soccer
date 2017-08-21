@@ -4,7 +4,7 @@ instance variables
 
 man : MatchManager := new MatchManager();
 
-
+number_of_team : int := 6;
 
 
 operations 
@@ -18,22 +18,17 @@ MatchManagerT01(str) == TestCase(str);
 public setUp : () ==> ()
 setUp() == (
 		println("\n------------------Group-----------------");
-		man.initGroup(4);
-		man.calc();
-		man.printAll();
+		man.initGroup(number_of_team);
 );
 
 public runTest : () ==> ()
 runTest() == 
   (
-  
-		dcl matchmakes : map Match to MatchMake := man.getAllMatchMakes();
-		dcl matchmake : MatchMake := matchmakes(mk_(2,1));
-		println("------------------START-----------------");
---		for all matchmake in set rng man.getAllMatchMakes() do (
---			matchmake.setScore()
---		);
-		matchmake.setScore(3,2);
+		-- 試合結果を登録する
+		for all matchmake in set rng man.getAllMatchMakes() do (
+			matchmake.setScore(MATH`rand(5), MATH`rand(5));
+		);
+		
 		man.calc();
 		man.printAll();
 	);
