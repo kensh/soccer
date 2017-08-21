@@ -103,7 +103,6 @@ pre teamID in set dom teams;
 -- calculate group scores
 public calc : () ==> ()
 calc() == (
-	dcl ss : seq of Team;
 	
 	for all matchmake in set rng matchmakes do (
 		if matchmake.isDone() then (
@@ -122,7 +121,6 @@ calc() == (
 	);
 	
 	sortedteams := sort(rng teams, []);
-	
 	
 );
 
@@ -186,12 +184,14 @@ printAll() == (
 	println("");
 	
 	for all matchmake in set rng matchmakes do (
-		print(" <");
-		print(matchmake.getScore(matchmake.getMatch().#1));
-		print(" - ");
-		print(matchmake.getScore(matchmake.getMatch().#2));
-		print("> ");
-		print(", ");
+		if matchmake.isDone() then (
+			print(" <");
+			print(matchmake.getScore(matchmake.getMatch().#1));
+			print(" - ");
+			print(matchmake.getScore(matchmake.getMatch().#2));
+			print("> ");
+			print(", ");
+		);
 	);
 	println("");
 	

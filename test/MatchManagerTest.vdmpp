@@ -11,9 +11,8 @@ execute() == (
     
     result.addListener(new MyPrintTestListener());
 
-    
-    
-    suite.addTest(new MatchManagerT01("case01 - randomly creates nodes"));
+    suite.addTest(new MatchManagerT01("case01 - randomly creates teams"));
+    suite.addTest(new MatchManagerT02("case02 - creates prediction "));
 
     suite.run(result);
 );

@@ -1,0 +1,44 @@
+class MatchManagerT02 is subclass of TestCase, CommonType, MyPrintTestListener
+
+instance variables
+
+man : MatchManager := new MatchManager();
+
+number_of_team : int := 6;
+
+
+operations 
+
+public MatchManagerT02 : () ==> MatchManagerT02
+MatchManagerT02() == TestCase("T02");
+
+public MatchManagerT02 : seq of char ==> MatchManagerT02
+MatchManagerT02(str) == TestCase(str);
+
+public setUp : () ==> ()
+setUp() == (
+		println("\n------------------Group-----------------");
+		man.initGroup(number_of_team);
+);
+
+public runTest : () ==> ()
+runTest() == 
+  (	dcl left_matches : set of Match := {mk_(2, 1), mk_(4, 3), mk_(6, 5)};
+		dcl left_matchmakes : map Match to MatchMake := left_matches <: man.getAllMatchMakes();
+		dcl done_matchmakes : map Match to MatchMake := left_matches <-: man.getAllMatchMakes();
+		
+		-- 試合結果を登録する
+		for all matchmake in set rng done_matchmakes do (
+			matchmake.setScore(MATH`rand(5), MATH`rand(5));
+		);
+		
+		man.calc();
+		man.printAll();
+	);
+
+public tearDown : () ==> ()
+tearDown() == 
+  skip;
+
+
+end MatchManagerT02
