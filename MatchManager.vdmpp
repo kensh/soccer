@@ -94,6 +94,11 @@ public pure getAllMatchMakes : () ==> map Match to MatchMake
 getAllMatchMakes() ==
   return matchmakes;
 
+-- get All Teams 
+public pure getAllTeams : () ==> map TeamID to Team
+getAllTeams() ==
+  return teams;
+  
 -- get Team from specific ID
 public pure getTeam : TeamID ==> Team
 getTeam(teamID) ==

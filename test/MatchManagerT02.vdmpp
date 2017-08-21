@@ -26,6 +26,7 @@ runTest() ==
   (	dcl left_matches : set of Match := {mk_(2, 1), mk_(4, 3), mk_(6, 5)};
 		dcl left_matchmakes : map Match to MatchMake := left_matches <: man.getAllMatchMakes();
 		dcl done_matchmakes : map Match to MatchMake := left_matches <-: man.getAllMatchMakes();
+		dcl h : Team; 
 		
 		-- 試合結果を登録する
 		for all matchmake in set rng done_matchmakes do (
@@ -34,6 +35,19 @@ runTest() ==
 		
 		man.calc();
 		man.printAll();
+		
+		-- 優勝見込み
+		h := man.highest(rng man.getAllTeams());
+		println("");
+		
+		for all team in set rng man.getAllTeams() do (
+			print(team.getID());
+			if team.getPoint() >= (h.getPoint() - 3) then (
+				println(":優勝見込みあり");
+			) else (
+				println(":優勝見込みなし");
+			);
+		);
 	);
 
 public tearDown : () ==> ()
