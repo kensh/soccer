@@ -31,6 +31,10 @@ runTest() ==
 		
 		man.calc();
 		man.printAll();
+		
+		assertTrue("check existance of winner(s) of the group : ", card {man.highest(rng man.getAllTeams())} > 0); 
+		assertTrue("the points must be lower than the number of teams minus one : ", man.highest(rng man.getAllTeams()).getPoint() <= (card (rng man.getAllTeams()) - 1)*3); 
+	
 	);
 
 public tearDown : () ==> ()
