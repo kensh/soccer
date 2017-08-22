@@ -176,10 +176,9 @@ pre num >= 3;
 
 public mustWin : () ==> set of Team
 mustWin() == (
-		dcl winning : set of Team := possibleWithLose();
-		if card winning = 1  
-			and highest(winning).getPoint() - highest(rng getAllTeams() \ winning).getPoint() > 3 then (
-			return winning;
+		dcl winning : Team := highest(rng getAllTeams());
+		if winning.getPoint() - highest(rng getAllTeams() \ {winning}).getPoint() > 3 then (
+			return {winning};
 		);
 		
 		return {};
@@ -197,7 +196,7 @@ possibleWithDraw() == (
 
 public possibleWithLose : () ==> set of Team
 possibleWithLose() == (
-		return possible(0);
+		return possible(0)\mustWin();
 );
 
 public possible : int ==> set of Team
