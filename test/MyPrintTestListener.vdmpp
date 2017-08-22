@@ -56,5 +56,12 @@ operations
     
     public println : Team ==> ()
     println(b) == IO`print(b);
+    
+    
+    public print : set of Team ==> ()
+    print(b) == IO`print(b);
+    
+    public println : set of Team ==> ()
+    println(b) == IO`print(b);
 
 end MyPrintTestListener

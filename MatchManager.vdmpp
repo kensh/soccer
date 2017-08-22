@@ -174,6 +174,52 @@ initGroup(num) == (
 )
 pre num >= 3;
 
+public mustWin : () ==> set of Team
+mustWin() == (
+		dcl winning : set of Team := possibleWithLose();
+		if card winning = 1  
+			and highest(winning).getPoint() - highest(rng getAllTeams() \ winning).getPoint() > 3 then (
+			return winning;
+		);
+		
+		return {};
+);
+
+public possibleWithWin : () ==> set of Team
+possibleWithWin() == (
+		return possible(3)\possibleWithDraw()\possibleWithLose();
+);
+
+public possibleWithDraw : () ==> set of Team
+possibleWithDraw() == (
+		return possible(1)\possibleWithLose();
+);
+
+public possibleWithLose : () ==> set of Team
+possibleWithLose() == (
+		return possible(0);
+);
+
+public possible : int ==> set of Team
+possible(p) == (
+		dcl h : Team := highest(rng getAllTeams());
+		dcl ret : set of Team := {};
+		for all team in set rng getAllTeams() do (
+			if team.getPoint() >= (h.getPoint() - p) then (
+				ret := ret union {team};
+			) 
+		);
+		return ret;
+);
+
+public printTeams : set of Team ==> ()
+printTeams(ts) == (
+	for all team in set ts do (
+		print(team);
+		println("");
+	);
+);
+
 public printAll : () ==> ()
 printAll() == (
   for all team in set rng teams do (
