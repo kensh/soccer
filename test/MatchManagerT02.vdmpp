@@ -49,14 +49,7 @@ runTest() ==
 		println("\n勝ちで優勝見込み");
 		man.printTeams(man.possibleWithWin());
 		
---		for all team in set man.possibleWithLose() do (
---			print(team.getID());
---			println(eam.getIDt());
---		);
-		
---		for all team in set man.possibleWithLose() do (
---			
---		);
+		man.describe();
 		
 		
 	);

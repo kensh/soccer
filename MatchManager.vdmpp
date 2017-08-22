@@ -174,6 +174,84 @@ initGroup(num) == (
 )
 pre num >= 3;
 
+public getOpponents : Team ==> set of Team
+getOpponents(team) == (
+	dcl mms : set of MatchMake := {m | m in set rng getAllMatchMakes() & 
+									not m.isDone() 
+									and inn(team.getID(), m.getMatch()) } ;
+
+	return {getTeam(m.getMatch().#1) | m in set mms}
+		union { getTeam(m.getMatch().#2) | m in set mms}
+		\ {team};
+); 
+ 
+public describe : () ==> ()
+describe () == (
+	
+	for all team in set mustWin() do (
+		print("\n\n@@@@@@@@@@@@@@@@@@@@\nチーム");
+		print(team.getID());
+		println(" が優勝！");
+		print("\n\n");
+		return;
+	);
+	
+	for all team in set possibleWithLose() do (
+			print("\n\n@@@@@@@@@@@@@@@@@@@@\nチーム");
+			print(team.getID());
+			println("　について、");
+			for all t1 in set possibleWithLose() \ {team} do (
+				print(" ==> チーム");
+				print(t1.getID());
+				if t1 in set getOpponents(team) then (
+					if card possibleWithLose() = 2 then (
+						println("に勝てば優勝、引き分けの場合得失点差");
+					);
+				) else (
+						println("共に勝った場合得失点差");
+				);
+			);
+			for all t1 in set possibleWithDraw() \ {team} do (
+				print(" ==> チーム");
+				print(t1.getID());
+				if t1 in set getOpponents(team) then (
+					if card possibleWithDraw() = 1 then (
+						if card (possibleWithLose() \ {team}) = 0 then (
+							println("に負けなければ優勝");
+						) else (
+							println("に負けなければ、");
+							for all t3 in set (possibleWithLose() \ {team}) do (
+								print(" チーム");
+								print(t3.getID());
+								print("の結果次第");
+							);
+						);
+					) else (
+						println("に負けなければ、他のチームの結果次第");
+					);
+				) else (
+						println("と引き分け以上で勝ち、負ければ結果次第で得失点差になる可能性");
+				);
+			);
+	
+	
+			for all t1 in set possibleWithWin() \ {team} do (
+				print(" ==> チーム");
+				print(t1.getID());
+				if t1 in set getOpponents(team) then (
+						println("に負けなければ、他のチームの結果次第");
+				) else (
+						println("が勝って、チームが破れた場合、得失点差");
+				);
+			);
+		print("\n\n");
+		return;
+	);
+	
+);
+
+
+
 public mustWin : () ==> set of Team
 mustWin() == (
 		dcl winning : Team := highest(rng getAllTeams());
@@ -186,17 +264,17 @@ mustWin() == (
 
 public possibleWithWin : () ==> set of Team
 possibleWithWin() == (
-		return possible(3)\possibleWithDraw()\possibleWithLose();
+		return possible(3)\possible(1)\possible(0);
 );
 
 public possibleWithDraw : () ==> set of Team
 possibleWithDraw() == (
-		return possible(1)\possibleWithLose();
+		return possible(1)\possible(0);
 );
 
 public possibleWithLose : () ==> set of Team
 possibleWithLose() == (
-		return possible(0)\mustWin();
+		return possible(0)\ mustWin();
 );
 
 public possible : int ==> set of Team
